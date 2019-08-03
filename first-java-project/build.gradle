@@ -1,0 +1,35 @@
+import java.util.concurrent.CompletableFuture
+
+apply plugin: 'java'
+//apply plugin: 'application'
+
+// using properties defined in the gradle.properties file
+task usingAConfiguredProperty {
+    def propertyName = 'remote.url'
+
+    doFirst {
+        // verifying if a property was defined
+        //println project.hasProperty(propertyName)
+    }
+
+    doLast {
+        def value = findProperty(propertyName);
+        println value
+    }
+}
+
+// implementing a (very 'complex') plugin
+class OurCustomPlugin implements Plugin<Project> {
+
+    @Override
+    void apply(Project project) {
+        println "Insert magic here - all the Project objects are available here"
+        println "The project name is $project.name"
+
+        // we can also insert Java code, if needed / wanted
+        CompletableFuture.supplyAsync { System.out.println("It works :)") }
+    }
+}
+
+// applying the plugin to the current project
+// apply plugin: OurCustomPlugin

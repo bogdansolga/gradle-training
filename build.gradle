@@ -1,0 +1,102 @@
+import java.time.LocalDateTime
+
+//println "It works"
+//logger.info 'The logger also works'
+//logger.info("The logger also works")
+
+version = "1.0.0.SNAPSHOT"
+description = "The Gradle training examples"
+
+apply plugin: 'java'
+
+// enforces the used Gradle version --> the project will retrieve and use the specified version
+wrapper {
+    gradleVersion "5.5.1"
+}
+
+task initialTests {
+    description "Our first task"
+
+    doLast {
+        // accessing objects from the Gradle object
+        println "The Gradle version is $gradle.gradleVersion"
+        println("The Gradle homeDir is $gradle.gradleHomeDir")
+
+        // accessing objects from the Project object
+        println "The current build file is $buildFile"
+        println "The current relative path for the build file is " + relativePath(buildFile)
+        println "The version is " + getVersion()
+
+        println "The root dir is $rootDir.name"
+    }
+}
+
+// simple (and useless) tasks
+task "aSimpleTask"
+task "A task with some spaces in it"
+task WithoutAnyQuotes
+WithoutAnyQuotes.description = "Some description for the task"
+WithoutAnyQuotes.doLast { println "Do something" }
+
+aSimpleTask.doLast { println "A text from a task" }
+aSimpleTask.description = 'A very simple task'
+aSimpleTask.group = 'The useless'
+
+// declaring variables; 'def' = Groovy keyword for declaring variables
+def currentDateTime = LocalDateTime.now();
+
+task aMoreCompleteTask {
+    group 'The almost useful'
+    description 'A task which almost does something'
+    dependsOn(aSimpleTask)
+
+    // if a statement is added outside of 'doFirst' and 'doLast', it is invoked every time when the task is created
+    // - as if it would be put in a constructor
+    // println "Executed all the time"
+
+    doFirst { println "The action done first" }
+    //doFirst { println 'The other doFirst' }
+
+    doLast { println "The action done last" }
+    doLast { println "The current date and time is $currentDateTime"}
+    //doLast { println "The project name is $project.description" }
+}
+//aMoreCompleteTask.dependsOn(aSimpleTask);
+//aSimpleTask.dependsOn(aMoreCompleteTask, WithoutAnyQuotes);
+
+aMoreCompleteTask.mustRunAfter WithoutAnyQuotes
+
+def filesLocation = 'file-copying-example'
+task copyFile(type: Copy) {
+    from filesLocation + '/source'
+    into filesLocation + '/destination'
+
+    def numberOfFiles = 0;
+    eachFile { FileCopyDetails file ->
+        println "\tCurrent file: '$file.name', size: " + file.file.length() + " bytes"
+        numberOfFiles++;
+    }
+
+    doLast { println "There were $numberOfFiles copied files" }
+}
+
+// a copy specification declaration --> can be further reused in other tasks
+def copySpecs = copySpec {
+    from 'source'
+    description 'A simple copy specification'
+}
+task copyWithSpec(type: Copy) {
+    with copySpecs
+    into 'destination'
+
+    // eachFile with a closure as a param
+    eachFile { file -> println file }
+
+    // used to perform text replacements in the copied files
+    // replaces all the occurrences of the keys with their values
+    expand([
+            jdbcUrl: 'jdbc://over.there'
+    ])
+
+    doLast { println 'All good' }
+}
