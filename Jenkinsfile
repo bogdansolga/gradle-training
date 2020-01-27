@@ -7,7 +7,7 @@ pipeline {
   }
   stages {
     stage('build') {
-      parallel {
+      //parallel {
         stage('build') {
           steps {
             echo 'hello'
@@ -21,7 +21,7 @@ pipeline {
         }
 
       }
-    }
+    //}
 
     stage('sequential') {
       steps {
