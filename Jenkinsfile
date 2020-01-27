@@ -23,5 +23,11 @@ pipeline {
       }
     }
 
+    stage('sequential') {
+      steps {
+        echo 'sequential'
+      }
+    }
+
   }
 }
