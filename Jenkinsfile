@@ -1,10 +1,6 @@
 pipeline {
-  agent {
-    node {
-      label 'the-most-powerful'
-    }
-
-  }
+  agent any
+  
   stages {
     stage('build') {
       parallel {
