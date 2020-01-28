@@ -24,8 +24,19 @@ pipeline {
     }
 
     stage('sequential-edited') {
-      steps {
-        echo 'sequential'
+      parallel {
+        stage('sequential-edited') {
+          steps {
+            echo 'sequential'
+          }
+        }
+
+        stage('another-stage') {
+          steps {
+            sleep 1
+          }
+        }
+
       }
     }
 
