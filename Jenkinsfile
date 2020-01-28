@@ -2,7 +2,7 @@ pipeline {
   agent any
   
   stages {
-    stage('build') {
+    stage('the-new-build') {
       parallel {
         stage('build') {
           steps {
